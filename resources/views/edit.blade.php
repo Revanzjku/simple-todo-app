@@ -8,30 +8,18 @@
 <body>
     <h1>Edit Tugas</h1>
 
-    {{-- Tampilkan error validasi --}}
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <form action="{{ route('tasks.update', $task) }}" method="post">
         @csrf 
         @method('PUT')
 
         <label>Judul:</label>
-        <input type="text" name="title" value="{{ old('title', $task->title) }}" required>
+        <input type="text" name="title" value="{{ $task->title }}" required>
 
         <label>Deskripsi:</label>
-        <textarea name="description">{{ old('description', $task->description) }}</textarea>
+        <textarea name="description">{{ $task->description }}</textarea>
 
         <label>
-            <input type="hidden" name="status" value="0">
-            <input type="checkbox" name="status" value="1" {{ $task->status ? 'checked' : '' }}> {{ $task->status_text }}
+            <input type="checkbox" name="status" value="1" {{ $task->status ? 'checked' : '' }}> Selesai
         </label>
 
         <button type="submit">Update</button>

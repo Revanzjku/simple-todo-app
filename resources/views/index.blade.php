@@ -23,7 +23,7 @@
     <ul>
         @foreach ($tasks as $task)
             <li>
-                <strong>{{ $task->title }}</strong> - {{ $task->status ? '✅ Selesai' : '⏳ Belum' }} <br>
+                <strong>{{ $task->title }}</strong> - {{ $task->status_text }} <br>
                 {{ $task->description }} <br>
                 <a href="{{ route('tasks.edit', $task->id) }}">Edit</a>
                 <form action="{{ route('tasks.delete', $task->id) }}" method="POST" style="display:inline;">

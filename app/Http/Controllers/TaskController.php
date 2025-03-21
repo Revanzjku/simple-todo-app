@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -50,18 +51,10 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
         //
-        $request->merge(['status' => $request->has('status')]);
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'boolean',
-        ]);
-
-        $task->update($request->only(['title', 'description', 'status']));
-
+        $task->update($request->validated());
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil diperbarui');
     }
 
