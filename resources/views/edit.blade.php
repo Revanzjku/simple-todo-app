@@ -8,14 +8,32 @@
 <body>
     <h1>Edit Tugas</h1>
 
-    <form action="{{route('tasks.update', $task)}}" method="post">
+    {{-- Tampilkan error validasi --}}
+    @if ($errors->any())
+        <div style="color: red;">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('tasks.update', $task) }}" method="post">
         @csrf 
         @method('PUT')
-        <input type="text" name="title" value="{{$task->title}}" required>
-        <textarea name="description">{{ $task->description }}</textarea>
+
+        <label>Judul:</label>
+        <input type="text" name="title" value="{{ old('title', $task->title) }}" required>
+
+        <label>Deskripsi:</label>
+        <textarea name="description">{{ old('description', $task->description) }}</textarea>
+
         <label>
-            <input type="checkbox" name="status" {{ $task->status ? 'checked' : '' }}> Selesai
+            <input type="hidden" name="status" value="0">
+            <input type="checkbox" name="status" value="1" {{ $task->status ? 'checked' : '' }}> {{ $task->status_text }}
         </label>
+
         <button type="submit">Update</button>
     </form>
 </body>

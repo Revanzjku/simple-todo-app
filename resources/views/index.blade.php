@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1>To-Do List</h1>
+    <a href="{{route('tasks.trashed')}}">Tempat Sampah</a>
 
     @if(session('success'))
         <p style="color: green;">{{session('success')}}</p>

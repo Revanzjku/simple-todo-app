@@ -74,4 +74,24 @@ class TaskController extends Controller
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus');
     }
+
+    public function trashed()
+    {
+        $tasks = Task::onlyTrashed()->get();
+        return view('trash', compact('tasks'));
+    }
+
+    public function restore($id) 
+    {
+        $task = Task::onlyTrashed()->findOrFail($id);
+        $task->restore();
+        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dikembalikan');
+    }
+
+    public function forceDelete($id)
+    {
+        $task = Task::onlyTrashed()->findOrFail($id);
+        $task->forceDelete();
+        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus permanen');
+    }
 }
