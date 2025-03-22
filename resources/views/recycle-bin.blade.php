@@ -5,17 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recycle Bin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .task-card {
+            margin-bottom: 20px;
+        }
+        .task-table {
+            margin-top: 20px;
+        }
+        .task-table th, .task-table td {
+            vertical-align: middle;
+        }
+        .task-table .btn-group {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Recycle Bin</h1>
+
+        <h1 class="text-center mb-4">Recycle Bin</h1>
         <a href="{{ route('tasks.index') }}" class="btn btn-primary mb-3">Kembali ke Daftar Tugas</a>
-        <div class="card">
-            <div class="card-header">
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <div class="card task-card">
+            <div class="card-header bg-primary text-white">
                 Daftar Tugas yang Dihapus
             </div>
             <div class="card-body">
-                <table class="table">
+                <table class="table task-table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -31,17 +55,19 @@
                             <th scope="row">{{ $loop->iteration }}</th>
                             <td>{{ $task->title }}</td>
                             <td>{{ $task->description }}</td>
-                            <td>{{ $task->deleted_at->format('d M Y H:i:s') }}</td>
+                            <td>{{ $task->deleted_at->timezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
                             <td>
-                                <form action="{{ route('tasks.restore', $task->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-success">Pulihkan</button>
-                                </form>
-                                <form action="{{ route('tasks.forceDelete', $task->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin?')">Hapus Permanen</button>
-                                </form>
+                                <div class="btn-group">
+                                    <form action="{{ route('tasks.restore', $task->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success">Pulihkan</button>
+                                    </form>
+                                    <form action="{{ route('tasks.forceDelete', $task->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus permanen?')">Hapus Permanen</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
