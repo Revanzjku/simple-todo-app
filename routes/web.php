@@ -14,11 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [TaskController::class, 'index'])->name('tasks.index');
-Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-Route::get('/tasks/edit/{task}', [TaskController::class, 'edit'])->name('tasks.edit');
-Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
-Route::delete('/tasks/delete/{task}', [TaskController::class, 'destroy'])->name('tasks.delete');
-Route::get('/trashed', [TaskController::class, 'trashed'])->name('tasks.trashed');
-Route::post('/trashed/restore/{id}', [TaskController::class, 'restore'])->name('tasks.restore');
-Route::delete('/trashed/force-delete/{id}', [TaskController::class, 'forceDelete'])->name('tasks.forceDelete');
+Route::get('/', [TaskController::class, 'index']);
+Route::resource('tasks', TaskController::class);
+Route::get('/recycle-bin', [TaskController::class, 'recycleBin'])->name('tasks.recycleBin');
+Route::post('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore');
+Route::delete('/tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.forceDelete');

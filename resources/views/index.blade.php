@@ -3,35 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi To-Do List</title>
+    <title>Todo App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>To-Do List</h1>
-    <a href="{{route('tasks.trashed')}}">Tempat Sampah</a>
-
-    @if(session('success'))
-        <p style="color: green;">{{session('success')}}</p>
-    @endif
-
-    <form action="{{route('tasks.store')}}" method="post">
-        @csrf
-        <input type="text" name="title" placeholder="Nama tugas" required>
-        <textarea name="description" placeholder="Deskripsi"></textarea>
-        <button type="submit">Tambah</button>
-    </form>
-
-    <ul>
-        @foreach ($tasks as $task)
-            <li>
-                <strong>{{ $task->title }}</strong> - {{ $task->status_text }} <br>
-                {{ $task->description }} <br>
-                <a href="{{ route('tasks.edit', $task->id) }}">Edit</a>
-                <form action="{{ route('tasks.delete', $task->id) }}" method="POST" style="display:inline;">
-                    @csrf @method('DELETE')
-                    <button type="submit" onclick="return confirm('Hapus tugas ini?')">Hapus</button>
+    <div class="container mt-5">
+        <h1 class="text-center">Todo App</h1>
+        <a href="{{ route('tasks.recycleBin') }}" class="btn btn-secondary mb-3">Recycle Bin</a>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        <div class="card">
+            <div class="card-header">
+                Tambah Tugas Baru
+            </div>
+            <div class="card-body">
+                <form action="{{ route('tasks.store') }}" method="post">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Nama Tugas</label>
+                        <input type="text" class="form-control" name="title" id="title" placeholder="Masukkan nama tugas">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Deskripsi Tugas</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Masukkan deskripsi tugas"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Tambah Tugas</button>
                 </form>
-            </li>
-        @endforeach
-    </ul>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                Daftar Tugas
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nama Tugas</th>
+                            <th scope="col">Deskripsi</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tasks as $task)
+                        <tr>
+                            <th scope="row">{{ $loop->iteration }}</th>
+                            <td>{{ $task->title }}</td>
+                            <td>{{ $task->description }}</td>
+                            <td>
+                                @if ($task->status)
+                                    <span class="badge bg-success">Selesai</span>
+                                @else
+                                    <span class="badge bg-warning">Belum Selesai</span>
+                                @endif
+                            </td>
+                            <td>
+                                <form action="{{ route('tasks.update', $task->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm {{ $task->status ? 'btn-warning' : 'btn-success' }}">
+                                        {{ $task->status ? 'Belum Selesai' : 'Selesai' }}
+                                    </button>
+                                </form>
+                                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin?')">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

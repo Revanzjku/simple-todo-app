@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -14,9 +13,10 @@ class TaskController extends Controller
     public function index()
     {
         //
-        $tasks = Task::orderBy('created_at', 'desc')->get();
+        $tasks = Task::latest()->get();
         return view('index', compact('tasks'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -35,56 +35,47 @@ class TaskController extends Controller
             'status' => false
         ]);
 
-        return redirect()->route('tasks.index')->with('success', 'Tugas Berhasil Ditambahkan!!');
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-        return view('edit', compact('task'));
+        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil ditambahkan!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(TaskRequest $request, Task $task)
+    public function update(Request $request, Task $task)
     {
         //
-        $task->update($request->validated());
-        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil diperbarui');
+        $task->update([
+            'status' => !$task->status
+        ]);
+
+        return redirect()->route('tasks.index')->with('success', 'Status tugas telah berubah!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(task $task)
     {
         //
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus');
+        return redirect()->route('tasks.index')->with('success', 'Tugas telah dihapus!');
     }
 
-    public function trashed()
+    public function recycleBin()
     {
         $tasks = Task::onlyTrashed()->get();
-        return view('trash', compact('tasks'));
+        return view('recycle-bin', compact('tasks'));
     }
 
-    public function restore($id) 
+    public function restore(Task $task)
     {
-        $task = Task::onlyTrashed()->findOrFail($id);
         $task->restore();
-        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dikembalikan');
+        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dipulihkan!');
     }
 
-    public function forceDelete($id)
+    public function forceDelete(Task $task)
     {
-        $task = Task::onlyTrashed()->findOrFail($id);
         $task->forceDelete();
-        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus permanen');
+        return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus permanen!');
     }
 }

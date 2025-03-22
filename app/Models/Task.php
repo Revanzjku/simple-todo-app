@@ -18,9 +18,4 @@ class Task extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public function getStatusTextAttribute()
-    {
-        return $this->status ? '✅ Selesai' : '⏳ Belum';
-    }
-
 }
